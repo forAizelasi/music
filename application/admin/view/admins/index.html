@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="__STATIC__/admin/layui.js"></script>
+    <link rel="stylesheet" href="__STATIC__/admin/css/layui.css">
+    <style>
+        .header span{background: #009688;margin-left: 30px;padding: 10px;color: #ffffff;}
+        .header div{border-bottom: solid 2px #009688;margin-top: 10px;}
+        .header button{float: right;margin-top: -5px}
+    </style>
+</head>
+<body style="padding: 10px;">
+<div class="header">
+    <span>管理员列表</span>
+    <button class="layui-btn layui-btn-sm" onclick="add()">添加</button>
+    <div></div>
+</div>
+<table class="layui-table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>用户名</th>
+            <th>真实姓名</th>
+            <th>角色</th>
+            <th>状态</th>
+            <th>添加时间</th>
+            <th>操作</th>
+        </tr>
+    </thead>
+    <tbody>
+    {foreach $data as $key=>$value}
+        <tr>
+            <td>{$value['a_id']}</td>
+            <td>{$value['name']}</td>
+            <td>{$value['truename']}</td>
+            {foreach $res as $val}
+                {if $value['gid'] == $val['gid']}
+                <td>{$val['title']}</td>
+                {/if}
+            {/foreach}
+            <td>{$value['status']==1?'正常':'<span style="color: red;">禁用</span>'}</td>
+            <td>{:date('Y-m-d H:i:s' , $value['addTime'])}</td>
+            <td>
+                <button class="layui-btn layui-btn-xs" onclick="add({$value['a_id']})">编辑</button>
+                <button class="layui-btn layui-btn-danger layui-btn-xs" onclick="del({$value['a_id']})">删除</button>
+                <button class="layui-btn layui-btn-danger layui-btn-xs" name="upd" onclick="upd({$value['a_id']})">更改状态</button>
+            </td>
+    {/foreach}
+        </tr>
+    </tbody>
+</table>
+<script>
+    layui.use(['layer'],function () {
+        layer = layui.layer;
+        $ = layui.jquery;
+    });
+    //添加编辑
+    function add(id) {
+        layer.open({
+            type: 2,
+            title: id>0?'添加管理员':'添加管理员',
+            shade: 0.3,
+            area: ['480px', '420px'],
+            content: '/admin/Admins/add?id='+id
+        });
+    }
+
+    //删除
+    function del(a_id) {
+        layer.confirm('确定删除？', {
+            btn: ['确定','取消'] //按钮
+        }, function(){
+            $.post('/admin/Admins/delete',{'a_id':a_id},function (res) {
+                if (res.code>0){
+                    layer.alert(res.msg,{icone:2});
+                } else{
+                    layer.msg(res.msg);
+                    setTimeout(function () {
+                        window.location.reload();
+                    },1000);
+                }
+            },'json');
+        });
+    }
+
+    //修改状态
+    function upd(a_id) {
+        $.post('/admin/Admins/upd',{'a_id':a_id},function (res) {
+
+        },'json');
+    }
+</script>
+</body>
+</html>

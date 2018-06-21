@@ -88,7 +88,14 @@
     //修改状态
     function upd(a_id) {
         $.post('/admin/Admins/upd',{'a_id':a_id},function (res) {
-
+            if (res.code>0){
+                layer.alert(res.msg,{icone:2});
+            } else {
+                layer.msg(res.msg);
+                setTimeout(function () {
+                    window.location.reload();
+                },1000);
+            }
         },'json');
     }
 </script>

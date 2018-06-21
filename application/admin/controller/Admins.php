@@ -115,15 +115,21 @@ class Admins extends BaseAdmin
     {
         $id = (int)input('post.a_id');
         $data = Db::table('music_admin')->field('status')->where('a_id',$id)->select();
-        //var_dump($data);
         foreach ($data as $v){
             if ($v['status'] == 1){
-                echo 1111;
-                //$res = Db::table('music_admin')->where('a_id',$id)->update(['status'=>'0']);
-                //dump($res);
+                $res = Db::table('music_admin')->where('a_id',$id)->update(['status'=>'0']);
+                if (!$res){
+                    exit(json_encode(array('code'=>1,'msg'=>'更改失败')));
+                }else{
+                    exit(json_encode(array('code'=>0,'msg'=>'更改成功')));
+                }
             }else{
-                echo 111;
-                //$res = Db::table('music_admin')->where('a_id',$id)->update(['status'=>'1']);
+                $res = Db::table('music_admin')->where('a_id',$id)->update(['status'=>'1']);
+                if (!$res){
+                    exit(json_encode(array('code'=>1,'msg'=>'更改失败')));
+                }else{
+                    exit(json_encode(array('code'=>0,'msg'=>'更改成功')));
+                }
             }
         }
 
